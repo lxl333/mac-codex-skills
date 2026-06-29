@@ -1,0 +1,4 @@
+interface:
+  display_name: "数学错题本整理"
+  short_description: "把高中数学错题扫描件整理成可更新的分类网页和专项打印版。"
+  default_prompt: "请使用这个 skill，把学生的高中数学错题本或试卷材料整理成结构化题库、分类网页和按模块拆分的打印练习册。"
