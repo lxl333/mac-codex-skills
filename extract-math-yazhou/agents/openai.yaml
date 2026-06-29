@@ -1,0 +1,4 @@
+interface:
+  display_name: "压轴题提取"
+  short_description: "提取压轴题并生成小蓝本式学习页"
+  default_prompt: "Use $extract-math-yazhou to turn exam papers and answer keys into a polished MathJax HTML study page for pressure questions."
