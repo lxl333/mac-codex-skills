@@ -1,0 +1,4 @@
+interface:
+  display_name: "高考压轴专题"
+  short_description: "按卷面分区抽取压轴题并生成学习页"
+  default_prompt: "Use $gaokao-pressure-topics to extract the final two problems from each exam section and build a MathJax HTML self-study page."
