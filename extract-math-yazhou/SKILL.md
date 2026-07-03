@@ -10,6 +10,7 @@ description: Extract high-school math challenge problems from exam papers and an
 1. Inventory the workspace with `rg --files` and identify question papers, answer keys, and file formats.
 2. For PDFs, render pages to PNG before relying on text extraction. Use text extraction only when the PDF has a real text layer.
 3. Locate requested problem numbers visually or by text. For scanned papers, crop the problem regions and answer regions from page images.
+   - **Hard requirement:** every crop must be visually verified against the rendered full page before delivery. A crop that is even slightly incomplete or includes unrelated material must be treated as failed work, regenerated, and rechecked.
 4. Preserve mathematical fidelity for question stems: embed clean cropped screenshots for formulas, diagrams, tables, and long stems instead of relying on OCR.
 5. Do not show objective-question answer-key screenshots by default. Replace them with a clear answer, student-friendly explanation, key idea, and mistake warning.
 6. For long-answer questions, prefer beautifully typeset text explanations over raw answer screenshots when the solution can be reconstructed reliably. Use MathJax/LaTeX for all formulas so the result looks like MathType. Keep screenshots only as a fallback for unreadable formulas or exact diagrams.
@@ -59,12 +60,13 @@ description: Extract high-school math challenge problems from exam papers and an
 
 ## Crop Quality Rules
 
-- Inspect every generated question crop visually before final delivery.
+- Inspect every generated question crop visually before final delivery. This is mandatory, not optional.
 - A valid crop must include the problem number, complete stem, all subquestions, all choices/blanks, and all diagrams or tables belonging to the problem.
-- A valid crop must not include unrelated previous or next questions, section headings, answer-card footers, or clipped right-edge text.
+- A valid crop must not include unrelated previous or next questions, section headings, answer-card footers, page numbers, or clipped right-edge text.
 - Remove large blank areas below the problem, especially under long-answer question stems, but prefer a little clean white margin over a tight crop that risks cutting formulas or punctuation.
 - If a crop has missing top text, clipped right-side text, leftover page footer, unrelated next-section title, or a large blank block below the stem, it fails quality review.
 - If a crop is adjusted, regenerate the HTML and re-check the affected image.
+- Do not deliver the HTML until every crop passes visual inspection. If even one crop fails, update the crop coordinates or extraction method and rerun the artifact generation.
 
 ## Validation Checklist
 
@@ -78,5 +80,5 @@ description: Extract high-school math challenge problems from exam papers and an
 - Yellow highlights appear on the decisive steps inside explanations.
 - Official answer diagrams or tables are included when present.
 - Image links are relative to the HTML and open locally.
-- Crops have passed visual inspection for completeness and neat boundaries.
+- Crops have passed visual inspection for completeness and neat boundaries; record or report this validation before final delivery.
 - The page remains usable at narrow screen widths.
