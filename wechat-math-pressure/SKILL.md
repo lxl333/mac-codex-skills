@@ -7,6 +7,17 @@ description: Download math exam images from WeChat article links, organize the o
 
 Use this skill for WeChat public-account articles that embed exam-paper and answer-key pages as images.
 
+## Hard Requirements
+
+These are mandatory, learned from repeated corrections:
+
+- **Question crops must be complete and not tight.** For every requested problem, especially common pressure items such as `7, 11, 19`, the crop must include the full problem number, complete stem, all choices/subparts, diagrams, and final inequality/formula line. It must not clip the first line, final option, or square-root bar. Add clean top/bottom margin if needed.
+- **Question crops must not include unrelated previous-problem leftovers.** If a crop includes choices or formulas from the previous question, recrop it. Do not deliver a crop just because the target question is visible somewhere inside it.
+- **After any crop adjustment, regenerate the asset and visually inspect it again.** Open the final `qXX.png`, not only the contact sheet. Report that the crop was checked.
+- **Answer formulas must use robust MathJax, never shorthand.** Use `\frac{5}{7}`, `\frac{1}{m}`, `\frac{e}{x}`, `\frac{3}{2}`, `\frac{2}{3}`, `\frac{1}{6}`, and `\sqrt{3}`. Do not leave shorthand such as `\frac57`, `\frac1m`, `\frac ex`, `\frac32`, `\frac23`, `\frac16`, or `\sqrt3`.
+- **Formula-heavy answer strips must be explicitly checked.** Always inspect answer sections for problem `14` and problem `19` when present, because they often contain fraction and radical OCR errors. Expand their reveal panels and verify MathJax renders without visible raw TeX or `mjx-merror`.
+- **If browser preview cannot use `file://`, use a local HTTP server.** Validate the generated HTML through `http://127.0.0.1:<port>/...`, expand the relevant cards, and check `document.querySelectorAll('mjx-merror').length === 0`.
+
 ## Core Workflow
 
 1. Fetch the WeChat article with a mobile WeChat user-agent first. A normal desktop `curl` often returns a captcha page.
@@ -30,11 +41,13 @@ Use this skill for WeChat public-account articles that embed exam-paper and answ
 7. Crop each requested question from the paper images.
    - Every crop must include the problem number, full stem, all subquestions, choices/blanks, diagrams, and tables.
    - Remove unrelated previous/next questions, but prefer a little clean margin over clipping.
+   - For `q7`, `q11`, and `q19`, open the final crop image directly after generation; these are common failure points for missing choices, previous-question residue, or tight top boundaries.
    - Make a `crop_review.jpg` and visually inspect it before delivery.
 8. OCR the answer/key content into clean MathJax text.
    - Use a local OCR engine if available; otherwise manually transcribe from the answer images after visual inspection.
    - Preserve formulas with MathJax, using braced forms such as `\frac{2}{3}` instead of ambiguous `\frac23`.
    - Do not leave OCR artifacts like `\sqrt3` from source images as final text if it should be `\sqrt{3}`.
+   - Prefer braced fractions for all single-character numerators/denominators too: `\frac{1}{m}`, `\frac{e}{x}`, `\frac{c}{a}`.
 9. Generate a polished HTML page under `output/` with:
    - One card per pressure problem.
    - Question image first.
@@ -46,6 +59,7 @@ Use this skill for WeChat public-account articles that embed exam-paper and answ
    - The HTML has the expected number of cards.
    - Reveal panels are closed by default.
    - Open representative reveal panels and verify `mjx-merror` count is `0`.
+   - When cards `14` or `19` exist, open those reveal panels specifically and verify their answer strips and solution formulas render.
    - Inspect corrected crops after any boundary change.
 
 ## WeChat Extraction Notes
@@ -75,10 +89,10 @@ Follow the “小蓝本” study-page pattern:
 Before final delivery, search the generated HTML for common artifacts:
 
 - Control characters such as form-feed from accidental `\f`.
-- Unbraced shorthand likely to render poorly: `frac23`, `frac16`, `frac32`.
+- Unbraced shorthand likely to render poorly: `frac57`, `frac1m`, `frac ex`, `frac23`, `frac16`, `frac32`.
 - OCR source artifacts such as `sqrt3`, `lqrt`, `1n`, or missing braces in `\ln`, `\sqrt{}`.
 
-Then open or preview the HTML and check that MathJax reports no `<mjx-merror>` nodes after expanding at least the most formula-heavy cards.
+Then open or preview the HTML and check that MathJax reports no `<mjx-merror>` nodes after expanding at least the most formula-heavy cards. If the paper includes questions `14` and `19`, those cards must be included in this check.
 
 ## Delivery Summary
 
