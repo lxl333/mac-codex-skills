@@ -1,0 +1,4 @@
+interface:
+  display_name: "微信压轴题提取"
+  short_description: "从微信试卷图提取压轴题并生成PDF与HTML"
+  default_prompt: "Use $wechat-math-pressure to download math exam images from a WeChat article, make a PDF, and build an OCR MathJax pressure-question HTML page."
